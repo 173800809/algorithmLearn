@@ -3,8 +3,8 @@
 
 //import net.sf.json.JSONObject;
 
-import net.sf.json.JSONObject;
-import org.apache.commons.lang.StringUtils;
+//import net.sf.json.JSONObject;
+//import org.apache.commons.lang.StringUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -93,8 +93,8 @@ public class Test01ForOffer {
         node.left.left.right = p;
 
         TreeNode t11 = lowestCommonAncestor1(node, p, new TreeNode(11));
-        JSONObject jsonResult = JSONObject.fromObject(t11);
-        System.out.println(jsonResult);
+//        JSONObject jsonResult = JSONObject.fromObject(t11);
+//        System.out.println(jsonResult);
     }
 
 
@@ -811,6 +811,12 @@ public class Test01ForOffer {
     }
 
     //47礼物的最大价值(就是棋盘上放礼物。因为是从左上角开始，到右下角结束。所以应该使用动态规划，而不是使用深度优先搜索)
+    // 就和数数到100，一次最多3个数字，最少1个数字。前后是相关的，比如下图
+    // 到1，只能通过2和3。2就是dp[n],3就是dp[n-1]
+    // 0 0 0 0 0
+    // 0 0 0 0 0
+    // 0 0 0 0 2
+    // 0 0 0 3 1
     public static int getMost(int[][] values){
         if(values == null || values.length == 0 || values[0].length == 0)//需要判断存储数字的三层结构为空，则为空
             return 0;
@@ -820,6 +826,7 @@ public class Test01ForOffer {
         for(int[] value : values){
             //最左边从上到下累加
             dp[0] += value[0];
+            // i值需要从1开始，不然就会有溢出的风险
             for(int i = 1; i < n; i++)
                 //dp[i]是当前点的上方点最大值（因为dp[i]还是保存上次的最大值），dp[i - 1]是当前点的左方点的最大值
                 dp[i] = Math.max(dp[i], dp[i - 1]) + value[i];
