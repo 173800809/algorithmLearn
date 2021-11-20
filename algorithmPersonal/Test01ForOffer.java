@@ -878,14 +878,15 @@ public class Test01ForOffer {
         return ret;
     }
 
-    //44数字序列中的某一位数字（数字以 0123456789101112131415...自然数顺序，求这个字符串的第 index 位。）
+    //44数字序列中的某一位数字（数字以 0123456789101112131415...自然数顺序，求这个字符串的第 index<从0开始> 位。）
+    // 把数据截取为同一位数值，比如数只有个位或十位或百位的数
     public static int getDigitAtIndex(int index){
         if(index < 0)
             return -1;
         int place = 1;//1 表示个位，2 表示十位
-        while(true){
-            int amount = getAmountOfPlace(place);//当前位数下有多少"数字"，个位10个<特例>、十位90个、百位900个
-            int totalAmount = amount * place;//当前位数下有多少个"纯数字"，十位90*2<2就是两位数>=180，百位900*3<3就是三位数>= 2700
+        while(true){// index在每次循环中都被改变
+            long amount = getAmountOfPlace(place);//当前位数下有多少"数字"，个位10个<特例>、十位90个、百位900个
+            long totalAmount = amount * place;//当前位数下有多少个"纯数字"，十位90*2<2就是两位数>=180，百位900*3<3就是三位数>= 2700
             if(index < totalAmount)//如果index在当前数字个数下，则可以找到此数字
                 return getDigitAtIndex(index, place);
             index -= totalAmount;//每次index都要减去上个位数的数字个数
@@ -893,24 +894,28 @@ public class Test01ForOffer {
         }
     }
     //place为数的数字组成的字符串长度，10，90，900，...
-    private static int getAmountOfPlace(int place){
+    private static long getAmountOfPlace(int place){
         if(place == 1)
             return 10;
-        return (int) Math.pow(10, place - 1) * 9;
+        return (long)Math.pow(10, place - 1) * 9;
     }
-    //place位数的起始数字，0，10，100，...
+    //place位数的起始数字，0(个位)，10(十位)，100(百位)，...
     private static int getBeginNumberOfPlace(int place){
         if(place == 1)
             return 0;
         return (int)Math.pow(10, place - 1);
     }
-    //在place位数组成的字符串中，第index个数
+    //在place位数组成的字符串中，第index个数（index = 15, place = 2）
     private static int getDigitAtIndex(int index, int place){
-        int beginNumber = getBeginNumberOfPlace(place);//得到初始数字
-        int shiftNumber = index / place;//
-        String number = (beginNumber + shiftNumber) + "";
-        int count = index % place;
-        return number.charAt(count) - '0';
+        long beginNumber = getBeginNumberOfPlace(place);// 得到初始数字（10）
+        long shiftNumber = index / place;// index属于第几个"完整"数字（7）
+        int count = index % place;// index在"完整"数字的第几位（1）
+
+        /**
+         * 技巧:通过string去数字的第n位数
+         */
+        String number = (beginNumber + shiftNumber) + "";// 得到index所属的"完整"数字(17)
+        return number.charAt(count) - '0';// 获得在index的值(1)
     }
 
     //43从1到n整数中1出现的次数(从牛客网上找的答案)
@@ -920,7 +925,10 @@ public class Test01ForOffer {
         int count = 0;
         for(int i = 1; i <= n; i *= 10) {
             long diviver = i * 10;
-            count += (n / diviver) * i + Math.min(Math.max(n % diviver - i + 1, 0), i);
+            long t1 = (n / diviver) * i;
+            long t2 = Math.min(Math.max(n % diviver - i + 1, 0), i);
+
+            count += t1 + t2;
         }
         return count;
     }
