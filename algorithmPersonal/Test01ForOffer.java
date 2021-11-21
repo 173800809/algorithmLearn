@@ -923,24 +923,35 @@ public class Test01ForOffer {
         if(n <= 0)
             return 0;
         int count = 0;
+        // 输入为1321
+        // 得到的值
+        // 个位的1，left = 132(0-131)，right = 1(1)
+        // 十位的1，left = 130(0-12)，right = 10(0-9)
+        // 百位的1，left = 100(0)，right = 100(0-99)
+        // 千位的1，left = 0，right = 322(0-321)
         for(int i = 1; i <= n; i *= 10) {
+            // 划分的位数
             long diviver = i * 10;
-            long t1 = (n / diviver) * i;
-            long t2 = Math.min(Math.max(n % diviver - i + 1, 0), i);
+            // 位数的左边从0开始，左边的最大数的低一位
+            long left = (n / diviver) * i;
+            // 位数的左边的最大数，只包括右面的数
+            long right = Math.min(Math.max(n % diviver - i + 1, 0), i);
 
-            count += t1 + t2;
+            count += left + right;
         }
         return count;
     }
 
-    //42连续子数组的最大和
+    //42连续子数组的最大和(数组中有负数)
     public static int findGreatestSumOfSubArray(int[] nums){
         if (nums == null || nums.length == 0)
             return 0;
         int greatestSum = Integer.MIN_VALUE;
         int sum = 0;
         for(int val : nums){
+            // 是否取前sum的值，只有前sum大于0的时候
             sum = sum <= 0 ? val : sum + val;//只要和是正数，就要保留给之后用（所以不用担心正确结果是从中间开始的）
+            // 需要记录之前的最大值和现在的和进行比较
             greatestSum = Math.max(greatestSum, sum);
         }
         return greatestSum;
