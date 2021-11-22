@@ -957,20 +957,41 @@ public class Test01ForOffer {
         return greatestSum;
     }
 
-    //41.2字符流中第一个不重复的字符(解题方法是使用栈的原理，下面方法不全)
+    //41.2字符流中第一个不重复的字符(解题方法是使用栈的原理，下面方法不全<原题就是这样>)
+    // 验证方法：对输入的字符串，先Insert，再firstAppearingOnece
+//    public static String getNoDuplication(String str) {
+//        if(str == null || str.length() < 1){
+//            return null;
+//        }
+//        String result = "";
+//        for (int i = 0; i < str.length(); i++) {
+//            Insert(str.charAt(i));
+//            result = result + firstAppearingOnce();
+//        }
+//        return result;
+//    }
     private static int[] cnts = new int[256];
-    private Queue<Character> queue = new LinkedList<>();
-    public void Insert(char ch){
+    private static Queue<Character> queue = new LinkedList<>();
+    public static void Insert(char ch){
         cnts[ch]++;
         queue.add(ch);
+        // 需要使用while，因为要把栈中所有的重复字符都要删除
+        /**
+         * 使用栈做移除操作的时候注意使用while方法
+         */
         while(!queue.isEmpty() && cnts[queue.peek()] > 1)
             queue.poll();
     }
-    public char firstAppearingOnece(){
+    public static char firstAppearingOnce(){
         return queue.isEmpty() ? '#' : queue.peek();
     }
 
-    //41.1数据流中的中位数
+    //41.1数据流中的中位数（下面方法不全<原题就是这样>）
+    /**
+     * 重写Comparator，
+     * "默认" 从小到大，底层是(o1, o2) -> o1 - o2
+     * "重写" 从大到小，重写是(o1, o2) -> o2 - o1
+     */
     private static PriorityQueue<Integer> left = new PriorityQueue<>((o1, o2) -> o2 - o1);//大顶堆，存储左半边元素
     private static PriorityQueue<Integer> right = new PriorityQueue<>();//小顶堆，存储右半边元素，并且右边元素都大于左半边
     private static int N = 0;//当前数据流读入的元素个数
@@ -996,6 +1017,7 @@ public class Test01ForOffer {
     }
 
     //40最小的K个数(快速选择)（复杂度：O(N) +O(1)，只有当允许修改数组元素时才可以使用）
+    // 这k个数不用顺序输出(它们可以是无序的，只要是最小的k个数就行)，所以使用快速排序
     public static ArrayList<Integer> getLastNumbersSolution(int[] nums, int k){
         ArrayList<Integer> ret = new ArrayList<>();
         if(k > nums.length || k <= 0)
@@ -1009,6 +1031,7 @@ public class Test01ForOffer {
     public static void findKthSmallest(int[] nums, int k){
         int l = 0, h = nums.length - 1;
         while(l < h){
+            // j就是标杆的位置，包括j本身
             int j = partition(nums, l, h);
             if(j == k)
                 break;
@@ -1026,8 +1049,10 @@ public class Test01ForOffer {
             while(j != l && nums[--j] > p);
             if(i >= j)
                 break;
+            // 找到和标杆数字nums[l]顺序不同的数，交换他们的顺序
             swap(nums, i, j);
         }
+        // 最后一次把标杆数字nums[l]和最后一个没有换位置的数置换
         swap(nums, l, j);
         return j;
     }
@@ -1046,20 +1071,24 @@ public class Test01ForOffer {
             if(maxHeap.size() > k)
                 maxHeap.poll();
         }
+        // PriorityQueue可以直接注入到ArrayList，因为他们都是继承Queue
         return new ArrayList<>(maxHeap);
     }
 
     //39数组中出现次数超过一半的数字
     public static int moreThanHalfNumSolution(int[] nums){
         int majority = nums[0];
+        // 找到可能是最大数的数字（错误的一定会被错过，正确会留下来）
         for(int i = 1, cnt = 1; i < nums.length; i++){
             cnt = nums[i] == majority ? cnt + 1: cnt - 1;
+            // 确认是错了，就换一个
             if(cnt == 0){
                 majority = nums[i];
                 cnt = 1;
             }
         }
         int cnt = 0;
+        // 判断是否是有最大数
         for (int val : nums)
             if (val == majority)
                 cnt++;
