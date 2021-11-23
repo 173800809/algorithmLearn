@@ -1096,6 +1096,7 @@ public class Test01ForOffer {
     }
 
     //38字符串的排序（例如输入字符串 abc，所能排列出来的所有字符串 abc, acb, bac, bca, cab, cba）
+    // 每个字符都需要使用
     private static ArrayList<String> ret38 = new ArrayList<>();
     public static ArrayList<String> permutation(String str){
         if(str.length() == 0)
@@ -1113,7 +1114,8 @@ public class Test01ForOffer {
         for(int i = 0; i < chars.length; i++){
             if(hasUsed[i])
                 continue;
-            //保证不重复
+            //因为不可能：同一个字符，之前(i)和之后(i - 1)的那个都没有被使用过
+            //原因是这个字符被之前使用了。同样字符交换位置后是一样的
             if(i != 0 && chars[i] == chars[i - 1] && !hasUsed[i - 1])
                 continue;
             hasUsed[i] = true;
