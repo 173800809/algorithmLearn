@@ -1101,12 +1101,15 @@ public class Test01ForOffer {
     public static ArrayList<String> permutation(String str){
         if(str.length() == 0)
             return ret38;
+        // 是否选择的标识
         char[] chars = str.toCharArray();
+        // 必须要排序，让重复字符在一起，不然下面递归有问题
         Arrays.sort(chars);
         backtracking(chars, new boolean[chars.length], new StringBuilder());
         return ret38;
     }
     private static void backtracking(char[] chars, boolean[] hasUsed, StringBuilder s){
+        // 跳出递归的关键点
         if(s.length() == chars.length){
             ret38.add(s.toString());
             return;
@@ -1118,21 +1121,26 @@ public class Test01ForOffer {
             //原因是这个字符被之前使用了。同样字符交换位置后是一样的
             if(i != 0 && chars[i] == chars[i - 1] && !hasUsed[i - 1])
                 continue;
+            // 进入下层循环的时候，要把该字符置为已使用过
             hasUsed[i] = true;
             s.append(chars[i]);
             backtracking(chars, hasUsed, s);
+            // 删除的是临时字符串的"最后一位"
             s.deleteCharAt(s.length() - 1);
+            // 结束本次循环的时候，要把该字符置为未使用过
             hasUsed[i] = false;
         }
     }
 
-    //37序列化二叉树
-    private static String deserializeStr;
+    //37序列化二叉树（使用前序遍历）
     public static String serialize(TreeNode root){
         if(root == null)
             return "#";
         return root.val + " " + serialize(root.left) + " " + serialize(root.right);
     }
+    // 反序列化二叉树
+
+    private static String deserializeStr;
     public static TreeNode deserialize(String str){
         deserializeStr = str;
         return deserialize();
@@ -1140,7 +1148,9 @@ public class Test01ForOffer {
     private static TreeNode deserialize(){
         if(deserializeStr.length() == 0)
             return null;
+        // indexOf是第一次出现该字符的索引位置（如果不存在则返回-1，-1表示字符串中只有一个字符）
         int index = deserializeStr.indexOf(" ");
+        // 只有一个字符的时候，把该字符直接返回。不止一个字符的时候，把该字符串中第一个字符返回
         String node = index == -1 ? deserializeStr : deserializeStr.substring(0, index);
         deserializeStr = index == -1 ? "" : deserializeStr.substring(index + 1);
         if(node.equals("#"))
