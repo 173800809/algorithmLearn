@@ -1165,7 +1165,9 @@ public class Test01ForOffer {
         return t;
     }
 
-    //36二叉搜索树与双向链表
+    // 36二叉搜索树与双向链表
+    // 题意： (当转化完成以后，树中节点的左指针需要指向前驱，树中节点的右指针需要指向后继)，函数返回的TreeNode，有左右指针，其实可以看成一个双向链表的数据结构
+    // 二叉搜索树是中序排序
     private static TreeNode pre = null;
     private static TreeNode head = null;
     public static TreeNode convert(TreeNode root){
