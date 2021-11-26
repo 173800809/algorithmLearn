@@ -1149,9 +1149,12 @@ public class Test01ForOffer {
         if(deserializeStr.length() == 0)
             return null;
         // indexOf是第一次出现该字符的索引位置（如果不存在则返回-1，-1表示字符串中只有一个字符）
+        // index的值只能是1或-1
         int index = deserializeStr.indexOf(" ");
         // 只有一个字符的时候，把该字符直接返回。不止一个字符的时候，把该字符串中第一个字符返回
         String node = index == -1 ? deserializeStr : deserializeStr.substring(0, index);
+        // substring(subtractCount),返回的是字符串中除掉前面subtractCount字符。
+        // 例如"unhappy".substring(2) returns "happy"
         deserializeStr = index == -1 ? "" : deserializeStr.substring(index + 1);
         if(node.equals("#"))
             return null;
