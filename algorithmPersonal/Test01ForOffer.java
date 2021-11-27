@@ -1178,12 +1178,16 @@ public class Test01ForOffer {
         if(node == null)
             return;
         inOrder(node.left);
+        // 置当前节点的左节点
         node.left = pre;
-        if(pre != null)
+        if(pre != null) {// 如果不是第一个节点，置前一个节点的右节点
             pre.right = node;
+        }
+        // 重置前一个节点
         pre = node;
-        if(head == null)
+        if(head == null) {// 初始化头节点
             head = node;
+        }
         inOrder(node.right);
     }
 
