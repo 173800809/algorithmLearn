@@ -1177,17 +1177,36 @@ public class Test01ForOffer {
     private static void inOrder(TreeNode node){
         if(node == null)
             return;
+        /**
+         * 中序遍历的左节点
+         */
         inOrder(node.left);
-        // 置当前节点的左节点
+
+        /**
+         * 中序遍历的根节点(核心处理逻辑)
+         *
+         * 1.置当前节点的左指针
+         * 2.置前一个节点的右指针
+         * 3.把当前节点的值赋给 前一个节点
+         *
+         * 补充：初始化头节点
+         */
+        // 1.置当前节点的左指针
         node.left = pre;
-        if(pre != null) {// 如果不是第一个节点，置前一个节点的右节点
+        // 2.置前一个节点的右指针
+        if(pre != null) {
             pre.right = node;
         }
-        // 重置前一个节点
+        // 3.把当前节点的值赋给 前一个节点
         pre = node;
+        // 补充：初始化头节点
         if(head == null) {// 初始化头节点
             head = node;
         }
+
+        /**
+         * 中序遍历的右节点
+         */
         inOrder(node.right);
     }
 
