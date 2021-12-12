@@ -1211,10 +1211,20 @@ public class Test01ForOffer {
     }
 
     //35复杂链表的复制(输入一个复杂链表，返回结果)
+    // 例：
+    // 输入：1 -> 2 -> 3
+    // 过程：1 -> 复制1 -> 2 -> 复制2 —> 3 -> 复制3
+    // 结果：1 -> 2 -> 3
+    //      复制1 -> 复制2 -> 复制3
     public static RandomListNode clone(RandomListNode pHead){
         if(pHead == null)
             return null;
-        //插入新节点
+        /**
+         * 第一步：
+         *   插入新节点，构建next节点
+         * 结果(复制节点没有random节点)：
+         *   1 -> 复制1 -> 2 -> 复制2 —> 3 -> 复制3
+         */
         RandomListNode cur = pHead;
         while(cur != null){
             RandomListNode clone = new RandomListNode(cur.label);
@@ -1222,7 +1232,12 @@ public class Test01ForOffer {
             cur.next = clone;
             cur = clone.next;
         }
-        //建立random链接
+        /**
+         * 第二步：
+         *   建立random链接，构建random节点
+         * 结果(复制节点有正确的random节点)：
+         *   1 -> 复制1 -> 2 -> 复制2 —> 3 -> 复制3
+         */
         cur = pHead;
         while(cur != null){
             RandomListNode clone = cur.next;
@@ -1230,7 +1245,13 @@ public class Test01ForOffer {
                 clone.random = cur.random.next;
             cur = clone.next;
         }
-        //拆分
+        /**
+         * 第三步：
+         *   拆分，把两个链表分开(就是next指针指向next.next)
+         * 结果：
+         *   1 -> 2 -> 3
+         *   复制1 -> 复制2 -> 复制3
+         */
         cur = pHead;
         RandomListNode pCloneHead = pHead.next;
         while(cur.next != null){
@@ -1242,6 +1263,10 @@ public class Test01ForOffer {
     }
 
     //34二叉树中和为某一值的路径（从根节点开始，到叶子节点结束）
+    // 题意：
+    //  1.该题路径定义为从树的根结点开始往下一直到叶子结点所经过的结点
+    //  2.叶子节点是指没有子节点的节点
+    //  3.路径只能从父节点到子节点，不能从子节点到父节点
     private static ArrayList<ArrayList<Integer>> ret1 = new ArrayList<>();
     public static ArrayList<ArrayList<Integer>> findPath(TreeNode root, int target){
         backtracking1(root, target, new ArrayList<>());
