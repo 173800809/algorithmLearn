@@ -1262,7 +1262,7 @@ public class Test01ForOffer {
         return pCloneHead;
     }
 
-    //34二叉树中和为某一值的路径（从根节点开始，到叶子节点结束）
+    //34二叉树中和为某一值的路径（从根节点开始<一定包括根节点>，到叶子节点<一定包括叶子节点>结束）
     // 题意：
     //  1.该题路径定义为从树的根结点开始往下一直到叶子结点所经过的结点
     //  2.叶子节点是指没有子节点的节点
@@ -1278,34 +1278,48 @@ public class Test01ForOffer {
         path.add(node.val);
         target -= node.val;
         if(target == 0 && node.left == null && node.right == null){
+            /**
+             * 使用add方法的时候必须添加new ArrayList<>(path)
+             *
+             * 原因：因为path只用一个内存内置，会被刷新为空的
+             */
             ret1.add(new ArrayList<>(path));
         }else{
             backtracking1(node.left, target, path);
             backtracking1(node.right, target, path);
         }
+        // 移除最后一个元素
         path.remove(path.size() - 1);
     }
 
-    //33二叉搜索树的后续遍历序列（判断一个数组是不是二叉搜索树的后序遍历结果<因为二叉搜索树只有中序遍历是有序的>）
+    //33二叉搜索树的后续遍历序列
+    // （判断一个数组是不是二叉搜索树的后序遍历结果<因为二叉搜索树只有中序遍历是有序的>）
     public static boolean verifySequenceOfBST(int[] sequence){
         if(sequence == null || sequence.length == 0)
             return false;
         return verify(sequence, 0, sequence.length - 1);
     }
     private static boolean verify(int[] sequence, int first, int last){
+        // 当只有两个数据的时候，就不用关心两个数大小了
+        // 因为数据可能是：根左子树，根右子树
         if(last - first <= 1)
             return true;
+        // 获得当前循环的根节点
         int rootVal = sequence[last];
         int cutIndex = first;
+        // 到当前rootVal为根节点的 左子树节点(first至cutIndex)
+        // cutIndex是右子树的第一个数
         while(cutIndex < last && sequence[cutIndex] <= rootVal)
             cutIndex++;
+        // 如果在右子树有比根节点小的，则返回false(结果会透传到最外层)
         for(int i = cutIndex; i < last; i++)
             if(sequence[i] < rootVal)
                 return false;
         return verify(sequence, first, cutIndex - 1) && verify(sequence, cutIndex, last - 1);
     }
 
-    //32.3按之字形顺序打印二叉树
+    //32.3按之字形顺序打印二叉树(之字型顺序：就是不同层头尾相接的顺序)
+    // 使用队列的特性，存储不同的
     public static  ArrayList<ArrayList<Integer>> print(TreeNode pRoot){
         ArrayList<ArrayList<Integer>> ret22 = new ArrayList<>();
         Queue<TreeNode>  queue = new LinkedList<>();
@@ -1313,9 +1327,11 @@ public class Test01ForOffer {
         boolean reverse = false;
         while(!queue.isEmpty()){
             ArrayList<Integer> list = new ArrayList<>();
+            // 需要记录本层的节点数
             int cnt = queue.size();
             while(cnt-- > 0){
                 TreeNode node = queue.poll();
+                // 因为叶子节点的左右子树是null，所以node节点可能为null
                 if(node == null)
                     continue;
                 list.add(node.val);
@@ -1330,7 +1346,7 @@ public class Test01ForOffer {
         }
         return ret22;
     }
-    //32.2把二叉树打印成多行
+    //32.2把二叉树打印成多行（从上往下）
     public static ArrayList<ArrayList<Integer>> print32(TreeNode pRoot){
         ArrayList<ArrayList<Integer>> ret = new ArrayList<>();
         Queue<TreeNode> queue = new LinkedList<>();
@@ -1377,7 +1393,10 @@ public class Test01ForOffer {
         Stack<Integer> stack = new Stack<>();
         for(int pushIndex = 0, popIndex = 0; pushIndex < n; pushIndex++){
             stack.push(pushSequence[pushIndex]);
-            while(popIndex < n && !stack.isEmpty() && stack.peek() == popSequence[popIndex]){//判断另一个队列压出（另一个队列的压出顺序是从小到大）
+            /**
+             * 关键点：尽快压出(按照弹出序列)
+             */
+            while(popIndex < n && !stack.isEmpty() && stack.peek() == popSequence[popIndex]){
                 stack.pop();
                 popIndex++;
             }
@@ -1390,13 +1409,13 @@ public class Test01ForOffer {
     private static Stack<Integer> minStack30 = new Stack<>();
     public static void push(int node){
         dataStack.push(node);
+        //每次都压入一个最小栈
         minStack30.push(minStack30.isEmpty() ? node : Math.min(minStack30.peek(), node));
     }
     public static void pop(){
         dataStack.pop();
-        if(dataStack.peek() == minStack30.peek()) {
-            minStack30.pop();//剑指offer这里写错了
-        }
+        //压出栈的时候不需要判断
+        minStack30.pop();
     }
     public static int top(){
         return dataStack.peek();
@@ -1406,17 +1425,29 @@ public class Test01ForOffer {
     }
 
     //29顺时针打印矩阵
-    public static ArrayList<Integer> printMartrix(int[][] matrix){
+    public static ArrayList<Integer> printMatrix(int[][] matrix){
         ArrayList<Integer> ret = new ArrayList<>();
+        // row是行，column是列
         int r1 = 0, r2 = matrix.length - 1, c1 = 0, c2 = matrix[0].length - 1;
         while(r1 <= r2 && c1 <= c2){
+            // 打印最上一行
+            /**
+             * 不用担心下面图形
+             * X X X
+             * X O X
+             * X X X
+             * 因为O只会进入第一个for循环(下面的for循环)
+             */
             for(int i = c1; i <= c2; i++)
                 ret.add(matrix[r1][i]);
+            // 打印右侧一列
             for(int i = r1 + 1; i <= r2; i++)
                 ret.add(matrix[i][c2]);
+            // 打印最下一行(需要判断行)
             if(r1 != r2)
                 for(int i = c2 - 1; i >= c1; i--)
                     ret.add(matrix[r2][i]);
+            // 打印左侧一行(需要判断列)
             if(c1 != c2)
                 for(int i = r2 - 1; i > r1; i--)
                     ret.add(matrix[i][c1]);
@@ -1435,20 +1466,26 @@ public class Test01ForOffer {
         return isSymmetrical(pRoot.left, pRoot.right);
     }
     public static boolean isSymmetrical(TreeNode t1, TreeNode t2){
+        // 下面方法不能合并，因为需要一个方法返回true
         if(t1 == null && t2 == null)
             return true;
         if(t1 == null || t2 == null)
             return false;
+        // 判断值
         if(t1.val != t2.val)
             return false;
+        // 按照对称设置入参（两边对，中间对）
         return isSymmetrical(t1.left, t2.right) && isSymmetrical(t1.right, t2.left);
     }
 
     //27二叉树的镜像
+    //每个子树都需要进行交换，父节点需要先交换
     public static void mirror(TreeNode root){
         if(root == null)
             return;
+        // 父节点交换
         swap(root);
+        // 左右子树交换
         mirror(root.left);
         mirror(root.right);
     }
@@ -1458,12 +1495,18 @@ public class Test01ForOffer {
         root.right = t;
     }
 
-    //26树的子结构（判断一个树是否是另一个树的子数）
+    //26树的子结构（判断一个树是否是另一个树的子结构）
+    // (可以是根节点相同，或中间相同，或叶子节点相同)
+    // root1是父树(大的树)，root2是子树(小的树)
     public static boolean hasSubTree(TreeNode root1, TreeNode root2){
+        // 子树和父树有一个为null，则为false。（之后方法就容忍子树的枝子节点为null）
         if(root1 == null || root2 == null)
             return false;
         return isSubTreeWithRoot(root1, root2) || hasSubTree(root1.left, root2) || hasSubTree(root1.right, root2);
     }
+    // 判断root2是否和root1 从"根节点"开始相同（父树不用到子节点结束）
+    // 特例：
+    //  如果root2为null，则为true。认为也是从根节点相同
     private static boolean isSubTreeWithRoot(TreeNode root1, TreeNode root2){
         if(root2 == null)
             return true;
@@ -1474,16 +1517,23 @@ public class Test01ForOffer {
         return isSubTreeWithRoot(root1.left, root2.left) && isSubTreeWithRoot(root1.right, root2.right);
     }
 
-    //25合并两个排序的链表
+    //25合并两个排序的链表（升序排序，从小到大）
+    /**
+     * 本方法不需要额外空间,但输入的链表被改变了
+     */
     public static ListNode mergeSortList(ListNode list1, ListNode list2){
         if(list1 == null)
             return list2;
         if(list2 == null)
             return list1;
+        /**
+         * 通过赋值XXX.next 来继续判断之后的值
+         */
+        // 这个方法已经选择了list1第一个值
         if(list1.val <= list2.val){
             list1.next = mergeSortList(list1.next, list2);
             return list1;
-        }else{
+        }else{// 这个方法已经选择了list2第一个值
             list2.next = mergeSortList(list1, list2.next);
             return list2;
         }
